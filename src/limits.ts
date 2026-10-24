@@ -13,7 +13,6 @@ export const RATE_FORWARD = { windowMs: 60_000, max: 10 };
 
 export const SSE_MAX_SUBSCRIBERS_PER_BIN = 20;
 export const SSE_HEARTBEAT_MS = 25_000;
-export const SSE_REPLAY_MAX = 200;
 
 export const FORWARD_TIMEOUT_MS = 10_000;
 export const FORWARD_MAX_RESPONSE_BYTES = 64 * 1024;

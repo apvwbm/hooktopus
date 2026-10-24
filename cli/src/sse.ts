@@ -37,12 +37,10 @@ export function createSseParser(onEvent: (event: SseEvent) => void) {
     push(chunk: string) {
       buffer += chunk;
       let nl: number;
-      while ((nl = buffer.search(/\r\n|\r|\n/)) !== -1) {
-        // A lone \r at the very end may be half of a \r\n still in flight.
-        if (buffer[nl] === '\r' && nl === buffer.length - 1) break;
-        const sep = buffer.startsWith('\r\n', nl) ? 2 : 1;
+      // \n only: the server never sends \r, so no CRLF handling.
+      while ((nl = buffer.indexOf('\n')) !== -1) {
         line(buffer.slice(0, nl));
-        buffer = buffer.slice(nl + sep);
+        buffer = buffer.slice(nl + 1);
       }
     },
   };

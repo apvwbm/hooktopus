@@ -20,7 +20,6 @@ export async function captureRoutes(app: FastifyInstance): Promise<void> {
   );
 
   const limiter = createLimiter(RATE_CAPTURE.windowMs, RATE_CAPTURE.max);
-  app.addHook('onClose', async () => limiter.stop());
 
   const insert = app.db.prepare(
     `INSERT INTO requests (bin_id, received_at, method, url, headers, content_type, body, body_size, ip)

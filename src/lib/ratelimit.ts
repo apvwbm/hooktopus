@@ -1,7 +1,6 @@
 export interface Limiter {
   /** Counts one hit. Returns the seconds to wait, or 0 if the hit is allowed. */
   hit(key: string, now?: number): number;
-  stop(): void;
 }
 
 // ponytail: fixed window in memory, one process. Bursts at a window edge can
@@ -26,6 +25,5 @@ export function createLimiter(windowMs: number, max: number): Limiter {
       w.n += 1;
       return w.n > max ? Math.ceil((w.resetAt - now) / 1000) : 0;
     },
-    stop: () => clearInterval(sweep),
   };
 }

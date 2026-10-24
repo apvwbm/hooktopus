@@ -16,7 +16,6 @@ export type ReplayResult =
       status: number;
       headers: HeaderPairs;
       bodyText: string | null;
-      bodyBase64: string | null;
       truncated: boolean;
       durationMs: number;
     }
@@ -26,7 +25,6 @@ export interface ReplayOptions {
   /** guardedLookup in production; left out only by tests aiming at localhost. */
   lookup?: LookupFunction | undefined;
   timeoutMs?: number;
-  maxBytes?: number;
 }
 
 /**
@@ -37,7 +35,7 @@ export interface ReplayOptions {
  * public URL answering 302 to http://10.0.0.1 is the oldest SSRF trick there is.
  */
 export function sendStored(stored: Stored, target: URL, opts: ReplayOptions = {}): Promise<ReplayResult> {
-  const { lookup, timeoutMs = FORWARD_TIMEOUT_MS, maxBytes = FORWARD_MAX_RESPONSE_BYTES } = opts;
+  const { lookup, timeoutMs = FORWARD_TIMEOUT_MS } = opts;
   const started = performance.now();
   const elapsed = () => Math.round(performance.now() - started);
 
@@ -76,7 +74,6 @@ export function sendStored(stored: Stored, target: URL, opts: ReplayOptions = {}
             status: res.statusCode ?? 0,
             headers: pairs(res.rawHeaders),
             bodyText: text,
-            bodyBase64: text === null ? body.toString('base64') : null,
             truncated,
             durationMs: elapsed(),
           });
@@ -84,8 +81,8 @@ export function sendStored(stored: Stored, target: URL, opts: ReplayOptions = {}
 
         res.on('data', (chunk: Buffer) => {
           if (truncated) return;
-          if (size + chunk.length > maxBytes) {
-            chunks.push(chunk.subarray(0, maxBytes - size));
+          if (size + chunk.length > FORWARD_MAX_RESPONSE_BYTES) {
+            chunks.push(chunk.subarray(0, FORWARD_MAX_RESPONSE_BYTES - size));
             truncated = true;
             done();
             res.destroy();

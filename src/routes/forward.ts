@@ -11,7 +11,6 @@ const forwardBody = z.object({ url: z.string().min(1).max(2048) });
 
 export async function forwardRoutes(app: FastifyInstance): Promise<void> {
   const limiter = createLimiter(RATE_FORWARD.windowMs, RATE_FORWARD.max);
-  app.addHook('onClose', async () => limiter.stop());
 
   // Only buildApp's caller can turn this on, and only tests do: there is
   // deliberately no environment variable that switches the SSRF guard off.

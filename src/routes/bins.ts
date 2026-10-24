@@ -42,8 +42,8 @@ export const parseBinId = (params: unknown): string => parseOr400(binParams, par
  */
 export function liveBin(app: FastifyInstance, id: string, now = Date.now()) {
   const bin = app.db
-    .prepare('SELECT id, created_at, expires_at FROM bins WHERE id = ?')
-    .get(id) as { id: string; created_at: number; expires_at: number } | undefined;
+    .prepare('SELECT id, expires_at FROM bins WHERE id = ?')
+    .get(id) as { id: string; expires_at: number } | undefined;
   if (!bin) throw httpError(404, 'No such bin');
   if (bin.expires_at <= now) throw httpError(410, 'This bin has expired');
   return bin;
@@ -61,7 +61,6 @@ export function storedRequest(app: FastifyInstance, params: unknown): RequestRow
 
 export async function binsRoutes(app: FastifyInstance): Promise<void> {
   const limiter = createLimiter(RATE_CREATE_BIN.windowMs, RATE_CREATE_BIN.max);
-  app.addHook('onClose', async () => limiter.stop());
 
   const publicUrl = app.config.HOOKTOPUS_PUBLIC_URL;
   const ttlMs = app.config.HOOKTOPUS_BIN_TTL_HOURS * 3_600_000;
@@ -93,16 +92,10 @@ export async function binsRoutes(app: FastifyInstance): Promise<void> {
 
   app.get('/api/bins/:id', async (request) => {
     const bin = liveBin(app, parseBinId(request.params));
-    const requestCount = app.db
-      .prepare('SELECT COUNT(*) FROM requests WHERE bin_id = ?')
-      .pluck()
-      .get(bin.id) as number;
     return {
       id: bin.id,
       captureUrl: `${publicUrl}/h/${bin.id}`,
-      createdAt: new Date(bin.created_at).toISOString(),
       expiresAt: new Date(bin.expires_at).toISOString(),
-      requestCount,
     };
   });
 

@@ -6,11 +6,6 @@
 # --------------------------------------------------------------------- build
 FROM node:22-alpine AS build
 
-# node-gyp, in case better-sqlite3 ever has to compile. It ships prebuilt
-# binaries for linuxmusl x64 and arm64, so normally this goes unused, and the
-# stage is discarded either way.
-RUN apk add --no-cache python3 make g++
-
 WORKDIR /app
 
 # Dependencies in their own layer: touching source does not invalidate npm ci.

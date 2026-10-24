@@ -14,8 +14,8 @@ it('parses id, event and data, skipping comments and retry', () => {
   assert.deepEqual(events, [{ id: '7', event: 'request', data: '{"id":7}' }]);
 });
 
-it('survives chunks cut anywhere, even inside a line or a CRLF', () => {
-  const whole = 'id: 1\r\nevent: request\r\ndata: {"a":1}\r\n\r\nid: 2\r\nevent: request\r\ndata: {"a":2}\r\n\r\n';
+it('survives chunks cut anywhere, even mid-line', () => {
+  const whole = 'id: 1\nevent: request\ndata: {"a":1}\n\nid: 2\nevent: request\ndata: {"a":2}\n\n';
   for (let cut = 1; cut < whole.length; cut++) {
     const events = parse([whole.slice(0, cut), whole.slice(cut)]);
     assert.deepEqual(events.map((e) => e.data), ['{"a":1}', '{"a":2}'], `cut at ${cut}`);

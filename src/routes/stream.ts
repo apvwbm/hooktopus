@@ -2,14 +2,14 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { httpError } from '../lib/http.ts';
 import { sseFrame } from '../lib/hub.ts';
-import { SSE_MAX_SUBSCRIBERS_PER_BIN, SSE_REPLAY_MAX } from '../limits.ts';
+import { SSE_MAX_SUBSCRIBERS_PER_BIN } from '../limits.ts';
 import { liveBin, parseBinId, summary, SUMMARY_COLUMNS, type RequestRow } from './bins.ts';
 
 const cursor = z.coerce.number().int().nonnegative();
 
 export async function streamRoutes(app: FastifyInstance): Promise<void> {
   const missed = app.db.prepare(
-    `SELECT ${SUMMARY_COLUMNS} FROM requests WHERE bin_id = ? AND id > ? ORDER BY id ASC LIMIT ?`,
+    `SELECT ${SUMMARY_COLUMNS} FROM requests WHERE bin_id = ? AND id > ? ORDER BY id ASC`,
   );
 
   app.get('/api/bins/:id/stream', async (request, reply) => {
@@ -43,7 +43,7 @@ export async function streamRoutes(app: FastifyInstance): Promise<void> {
     // "send them what's new": it is either in the replay or in the live feed,
     // never in neither.
     if (since !== undefined) {
-      for (const row of missed.all(id, since, SSE_REPLAY_MAX) as RequestRow[]) {
+      for (const row of missed.all(id, since) as RequestRow[]) {
         res.write(sseFrame({ id: row.id, event: 'request', data: summary(row) }));
       }
     }

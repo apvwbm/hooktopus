@@ -9,5 +9,4 @@ it('allows max hits per window, per key, then resets', () => {
   assert.equal(limiter.hit('a', 200), 1, 'third hit waits out the window');
   assert.equal(limiter.hit('b', 200), 0, 'other keys are unaffected');
   assert.equal(limiter.hit('a', 1000), 0, 'new window');
-  limiter.stop();
 });

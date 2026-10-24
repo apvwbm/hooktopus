@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import fastifyStatic from '@fastify/static';
 import type { FastifyError, FastifyServerOptions } from 'fastify';
 import Fastify from 'fastify';
-import type { Config } from './config.ts';
+import { VERSION, type Config } from './config.ts';
 import type { Db } from './db/index.ts';
 import { sweep } from './lib/cleanup.ts';
 import { createHub, type Hub } from './lib/hub.ts';
@@ -10,7 +10,6 @@ import { JANITOR_INTERVAL_MS, SSE_HEARTBEAT_MS } from './limits.ts';
 import { binsRoutes, parseBinId } from './routes/bins.ts';
 import { captureRoutes } from './routes/capture.ts';
 import { forwardRoutes } from './routes/forward.ts';
-import { healthRoutes } from './routes/health.ts';
 import { streamRoutes } from './routes/stream.ts';
 
 export interface Deps {
@@ -66,7 +65,7 @@ export async function buildApp(
     reply.header('content-security-policy', "default-src 'self'; frame-ancestors 'none'");
   });
 
-  await app.register(healthRoutes);
+  app.get('/api/health', async () => ({ status: 'ok', version: VERSION }));
   await app.register(binsRoutes);
   await app.register(streamRoutes);
   await app.register(forwardRoutes);
