@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bin · HOOKtopus</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/bin.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">HOOK<span>topus</span></a>
+    <div class="capture">
+      <code id="capture-url" title="Capture URL">…</code>
+      <button id="copy-url">Copy</button>
+    </div>
+    <div class="meta">
+      <span id="expires"></span>
+      <span id="status" class="pill">connecting</span>
+    </div>
+  </header>
+
+  <div id="app" class="layout">
+    <nav class="list" aria-label="Captured requests">
+      <ol id="requests"></ol>
+      <div id="empty" class="empty" hidden>
+        Nothing yet. Send something to this bin:
+        <pre id="try-it"></pre>
+      </div>
+      <div id="more" class="more" hidden><button id="load-older">Load older</button></div>
+    </nav>
+    <main id="detail" class="detail">
+      <p class="note">Select a request to see it here.</p>
+    </main>
+  </div>
+
+  <section id="gone" class="gone" hidden>
+    <h1>This bin is gone</h1>
+    <p id="gone-reason">It expired or never existed. Bins last 24 hours.</p>
+    <button id="new-bin" class="primary">Create a new bin</button>
+  </section>
+</body>
+</html>

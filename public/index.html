@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HOOKtopus</title>
+  <meta name="description" content="A webhook catcher: get a URL, see every request it receives live, byte for byte, and forward it on.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/home.js"></script>
+</head>
+<body>
+  <main class="home">
+    <img src="/favicon.svg" width="56" height="56" alt="">
+    <h1>HOOK<span>topus</span></h1>
+    <p class="lede">Get a URL. Point a webhook at it. Watch every request arrive, live and byte for byte, then send it wherever you need it.</p>
+
+    <button id="create" class="primary">Create a bin</button>
+    <p id="error" class="error" hidden></p>
+
+    <ul>
+      <li>Bodies are kept as the exact bytes sent, even when they are broken.</li>
+      <li>Headers keep their order, their case and their duplicates.</li>
+      <li>Forward any request to a public URL, or to localhost with the CLI.</li>
+      <li>Bins expire after 24 hours. No account, no tracking.</li>
+    </ul>
+
+    <h2>Forward to your machine</h2>
+    <pre>npx hooktopus forward http://localhost:3000</pre>
+    <p class="note">Creates a bin, prints its URL, and replays everything it receives against your local server.</p>
+
+    <footer>
+      Open source: <a href="https://github.com/apvwbm/hooktopus">github.com/apvwbm/hooktopus</a>
+      · Made by <a href="https://apvwbm.com">Aitor Pérez</a>
+    </footer>
+  </main>
+</body>
+</html>

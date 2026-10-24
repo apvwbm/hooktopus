@@ -1,0 +1,27 @@
+# Installed inside, for the right platform: the laptop's node_modules carries a
+# native binary for the wrong OS and would break the image.
+**/node_modules
+
+# Compiled inside.
+dist
+
+# Data and secrets never belong in an image.
+data
+.env
+.env.*
+
+.git
+.gitignore
+.gitattributes
+test
+tsconfig.test.json
+
+# The CLI is its own npm package; the server image does not need it.
+cli
+
+# Host-side systemd unit. It configures the machine, not the container.
+deploy
+
+*.md
+Dockerfile
+.dockerignore
